@@ -46,13 +46,13 @@ def lineNotify(token, msg):
         "Authorization": "Bearer " + token,
         "Content-Type": "application/x-www-form-urlencoded"
     }
-    
+
     #while msg:
     #	send = msg.pop(0)
     payload = {'message': msg}
     r = requests.post(url, headers=headers, params=payload)
-    
-    return r.status_code	 
+
+    return r.status_code
 
 def getPageNumber(content):
     startIndex = content.find('index')
@@ -107,7 +107,12 @@ def crawler(url_list, curjob):
                     # 避免被認為攻擊網站
                     time.sleep(0.1)
                     # 開始爬文章內容
-                    parseGos(URL, g_id, curjob)
+                    sql_check = items['SysInfo']['job_check_exist']
+                    sql_check = sql_check.replace(':LINE_ID',curjob.token)
+                    sql_check = sql_check.replace(':DATA', URL)
+                    check_ret = db_util.check_job_exist(curjob.con,sql_check)
+                    if (check_ret==False):
+                        parseGos(URL, g_id)
             print("download: " + str(100 * count / total) + " %.")
         # 避免被認為攻擊網站
         time.sleep(0.1)
@@ -124,7 +129,7 @@ def checkformat(soup, class_tag, data, index, link):
     return content
 
 
-def parseGos(link, g_id, curjob):
+def parseGos(link, g_id):
     res = rs.get(link, verify=False)
     soup = BeautifulSoup(res.text, 'html.parser')
 
@@ -167,14 +172,6 @@ def parseGos(link, g_id, curjob):
         # print 'main_content error:',str(e)
 
     try:
-        #print("dddy")
-        sql_check = items['SysInfo']['job_check_exist']
-        sql_check = sql_check.replace(':LINE_ID',curjob.token)
-        sql_check = sql_check.replace(':DATA', link)
-        #print(sql_check)
-        if db_util.check_job_exist(curjob.con,sql_check):
-            #print('exist')
-            return
         #print(items['SysInfo']['job_check_exist'])
         #delta = datetime.now() - datetime.strptime(date, "%a %b %d %H:%M:%S %Y")
         if 1 == 1 : #curjob.search in title and delta.seconds < interval:
@@ -231,9 +228,10 @@ if __name__ == "__main__":
                 if link_list: #notice_num != 0:
                     lineNotify(r['line_id'], sendmsg)  # print(sendmsg)#
                     db_util.Insert_DB(r['line_id'], link_list,connection,items)
-                    
+
         cursor.close ()
     finally:
         connection.close()
     print("爬蟲結束...")
     print("execution time:" + str(time.time() - start_time) + "s")
+
