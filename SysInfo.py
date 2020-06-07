@@ -32,11 +32,13 @@ def Non_query(connection, sql):
     ret = False
     try:
         cursor = connection.cursor()
-        cursur.execute(sql)
+        cursor.execute(sql)
         connection.commit()
         print(cursor.rowcount, " executed!!" )
         cursor.close()
         ret = True
+    except Exception as e:
+        print(str(e))
     finally:
         return ret
 

@@ -22,6 +22,7 @@ import time
 import pymysql.cursors
 import pymysql
 import SysInfo
+import socket
 
 requests.packages.urllib3.disable_warnings()
 
@@ -78,16 +79,19 @@ def get_job_enable(connection,sql):
         return ret
 
 def Insert_DB(token, data,connection,items):
+		ret =False
 		try:
 			sql = items['SysInfo']['job_insert']
 			sql = sql.replace(":LINE_ID", token)
 			sql = sql.replace(":DATA", data)
+			sql = sql.replace(":HOST", socket.gethostname())
 			sql = sql.replace("https://www.ptt.cc/bbs/","")		
-			cursor = connection.cursor()
-			cursor.execute(sql)
-			connection.commit()
-			print(cursor.rowcount, "Record inserted successfully into Laptop table")
-			cursor.close()
+			ret = SysInfo.Non_query(connection,sql)			
+			#cursor = connection.cursor()
+			#cursor.execute(sql)
+			#connection.commit()
+			#print(cursor.rowcount, "Record inserted successfully into Laptop table")
+			#cursor.close()
 		finally:
 			print("Insert_DB done!")
 
@@ -99,11 +103,13 @@ def Insert_DB(token, data_list,connection,items):
 				sql = items['SysInfo']['job_insert']
 				sql = sql.replace(":LINE_ID", token)
 				sql = sql.replace(":DATA", data)		
+				sql = sql.replace(":HOST", socket.gethostname())
 				sql = sql.replace("https://www.ptt.cc/bbs/","")
+				SysInfo.Non_query(connection,sql)	
 				#print(sql)		
-				cursor.execute(sql)
-				connection.commit()
-				print(cursor.rowcount, "Record inserted successfully into Laptop table")				
+				#cursor.execute(sql)
+				#connection.commit()
+				#print(cursor.rowcount, "Record inserted successfully into Laptop table")				
 		finally:
 			if cursor:
 				cursor.close()

@@ -184,7 +184,8 @@ def parseGos(link, g_id):
 
 def purge_data(connection,sql):
     try:
-        SysInfo.Non_query(connection,sql)
+        ret = SysInfo.Non_query(connection,sql)
+        print(ret)
     except:
         print("purge data error")
 
