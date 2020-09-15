@@ -23,7 +23,11 @@ import pymysql.cursors
 import pymysql
 import SysInfo
 import socket
+import os
 
+#os.system("echo Hello from the other side!")
+
+imgtmpath='/tmp/pttimage'
 requests.packages.urllib3.disable_warnings()
 
 PttName, fileName = "", ""
@@ -106,6 +110,8 @@ def Insert_DB(token, data_list,connection,items):
 				sql = sql.replace(":HOST", socket.gethostname())
 				sql = sql.replace("https://www.ptt.cc/bbs/","")
 				SysInfo.Non_query(connection,sql)	
+				cmd = "echo https://www.ptt.cc/bbs/"+data+" >> "+ imgtmpath
+				os.system (cmd)
 				#print(sql)		
 				#cursor.execute(sql)
 				#connection.commit()

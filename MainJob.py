@@ -221,7 +221,7 @@ if __name__ == "__main__":
                 sendmsg = " " + r['board_title'] + " at " +  r['board_name']
                 link_list = []
                 for index in range(ALLpage, ALLpage - int(ParsingPage), -1):
-                    page_url = 'https://www.ptt.cc/bbs/' + str(r['board_name']) + '/index' + str(index) + '.html'
+                    page_url = 'https://www.ptt.cc/bbs/' + str(r['board_name']) + '/index.html'
                     index_list.append(page_url)
                 curjob = SysInfo.CurJob(connection, r['line_id'], r['board_title'])
                 crawler(index_list, curjob)
